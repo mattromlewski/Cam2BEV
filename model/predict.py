@@ -48,8 +48,21 @@ parser.add("-m",    "--model",                  type=str, required=True,        
 parser.add("-uh",   "--unetxst-homographies",   type=str, default=None,             help="Python file defining a list H of homographies to be used in uNetXST model")
 parser.add("-mw",   "--model-weights",          type=str, required=True,            help="weights file of trained model")
 parser.add("-pd",   "--prediction-dir",         type=str, required=True,            help="output directory for storing predictions of testing data")
+parser.add('--growth', type=bool, default=False, help="Allow tensorflow to grow the video memory allocation as needed (False)")
 conf, unknown = parser.parse_known_args()
 
+# allow gpu mem growth
+if conf.growth:
+    print("Enabling GPU memory allocation growth...")
+    gpus = tf.config.experimental.list_physical_devices('GPU')
+    if gpus:
+        # Currently, memory growth needs to be the same across GPUs
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+        logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+        print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+    else:
+        raise Exception("NO GPUs")
 
 # determine absolute filepaths
 conf.input_testing          = [utils.abspath(path) for path in conf.input_testing]
