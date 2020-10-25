@@ -74,7 +74,6 @@ if conf.growth:
     else:
         raise Exception("NO GPUs")
 
-
 # determine absolute filepaths
 conf.input_training         = [utils.abspath(path) for path in conf.input_training]
 conf.label_training         = utils.abspath(conf.label_training)
